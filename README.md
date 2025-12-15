@@ -1,79 +1,89 @@
-# PocketSOC – On-Device AI Fraud & Threat Detection Platform
+# 🛡️ PocketSOC
 
-## 🎯 Project Goal
-A production-grade, end-to-end system demonstrating on-device AI fraud detection, secure backend ingestion, and performance benchmarking.
+> **A Production-Grade, End-to-End AI Fraud & Threat Detection Platform.**
 
-## 🏗️ System Architecture
+![Dashboard Overview](assets/dashboard_overview.png)
 
-```ascii
-[ SMS / Text ]
-      ↓
-[ Mobile Agent (Simulated) ]
-      ↓
-[ Preprocessing & TFLite Inference ] -> (Scam Detected?)
-      ↓ Yes
-[ AES-256 Encryption ]
-      ↓
-[ HTTP POST + JWT ]
-      ↓
-[ FastAPI Backend ]
-      ↓
-[ Decryption & Verification ]
-      ↓
-[ SQLite DB & Audit Log ]
+## 🎯 Overview
+PocketSOC is a complete cybersecurity demonstrator that detects SMS fraud on mobile devices using local AI and reports threats to a secure cloud dashboard. It showcases a full pipeline: **On-Device Inference** → **Secure Transport (AES-256)** → **Real-time Visualization**.
+
+---
+
+## ⚡ Key Features
+
+*   **📱 Mobile AI Agent**: Runs a lightweight TFLite model to detect scams *offline* with low latency.
+*   **🔒 Zero-Trust Security**: IPayloads are encrypted with **AES-256-GCM** before leaving the device.
+*   **🌐 Real-Time Dashboard**: A stunning React UI to visualize the threat stream and system health.
+*   **🛡️ Secure Backend**: FastAPI server with **JWT Authentication** and **RBAC**.
+*   **🔗 Immutable Audit Log**: Hash-chained database logs to prevent tampering.
+
+![Dashboard Detail](assets/dashboard_detail.png)
+
+---
+
+## 🏗️ Architecture
+
+```mermaid
+graph LR
+    A[📱 Mobile Agent] -->|TFLite Inference| B(Scam Detected?)
+    B -->|Yes| C[🔒 AES-256 Encryption]
+    C -->|HTTPS POST| D[☁️ Secure Backend]
+    D -->|Decrypt & Verify| E[💾 Audit Store]
+    D -->|Real-time Socket| F[🖥️ Live Dashboard]
 ```
 
-## 📂 Folder Structure
-- **agent/**: Simulated mobile agent (inference, crypto, sender).
-- **model/**: AI pipeline (dataset, train, export).
-- **backend/**: Secure API (auth, encryption, RBAC).
-- **benchmarks/**: Performance testing scripts.
+---
 
-## 🚀 Setup Instructions
+## 🚀 Quick Start
 
-### Prerequisites
-- Python 3.9+
-- Docker (optional)
+### 1. Prerequisites
+*   Python 3.9+
+*   Node.js & npm
 
-### 1. Install Dependencies
+### 2. Backend Setup
 ```bash
+# Install Python dependencies
 pip install -r requirements.txt
+
+# Start the Backend Server
+uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-### 2. Train the Model
+### 3. Frontend Setup
 ```bash
-python model/dataset_loader.py  # Create dummy dataset
-python model/train.py           # Train model
-python model/convert_tflite.py  # Convert to TFLite
+# Open a new terminal
+cd frontend
+
+# Install Node modules
+npm install
+
+# Start the Dashboard
+npm run dev
 ```
+> Access the dashboard at **http://localhost:5174** (or port shown in terminal).
 
-### 3. Run the Backend
-```bash
-uvicorn backend.main:app --reload
-```
-or via Docker:
-```bash
-docker-compose up --build
-```
+### 4. Run Simulation
+1.  Open the **Dashboard** in your browser.
+2.  Scroll to the **Threat Simulator**.
+3.  Type a message like: *"URGENT: Click here to verify your bank account"*
+4.  Click **Send** and watch the alert pop up instantly!
 
-### 4. Run the Agent
-In a new terminal:
-```bash
-python agent/agent_runner.py
-```
-Type a message like *"Urgent: Update your bank details now"* to see it detected and reported.
+---
 
-## 🔒 Threat Model
-- **Data in Transit**: Secured via TLS (HTTPS) and application-layer AES-256 encryption.
-- **Authentication**: JWT tokens signed with HS256 (simulated robust auth).
-- **Access Control**: RBAC ensures only agents can report, and only analysts/admins can view.
-- **Audit**: Immutable hash-chained logs track all actions.
+## 📂 Project Structure
+*   `agent/`: Python script simulating the mobile defense app.
+*   `backend/`: FastAPI server handling encryption, auth, and logic.
+*   `frontend/`: React + Tailwind + Vite visualization dashboard.
+*   `model/`: Scripts to train and convert the AI model (TensorFlow).
+*   `benchmarks/`: Tools to test latency and throughput.
 
-## ⚡ Performance
-See `benchmarks/results.md` for latest run data.
-Run `python benchmarks/latency_test.py` to measure.
+---
 
-## 🔮 Future Improvements
-- Replace SQLite with PostgreSQL.
-- Implement real-time model updates (OTA).
-- Add specific phishing link detection features.
+## 🔧 Tech Stack
+*   **Core**: Python, React, JavaScript
+*   **AI**: TensorFlow, TFLite, Scikit-learn
+*   **Web**: FastAPI, Vite, Tailwind CSS
+*   **Security**: PyCryptodome (AES-GCM), JOSE (JWT)
+
+---
+*Built for the Advanced AI Coding Showcase.*
