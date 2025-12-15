@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  backend:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    command: uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - SECRET_KEY=supersecretkey123
+      - AGENT_SECRET_KEY=agentsecretkey12345678901234567890
+      - DATABASE_URL=sqlite:///./pocketsoc.db
